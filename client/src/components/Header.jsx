@@ -25,9 +25,7 @@ const Header = () => {
               />
             </Link>
           ) : (
-            <Link to="/sign-in">
-              <li>Sign In</li>
-            </Link>
+            <li>Sign In</li>
           )}
         </ul>
       </div>
