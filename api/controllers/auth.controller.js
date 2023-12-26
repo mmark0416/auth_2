@@ -34,3 +34,38 @@ export const signIn = async (req, res) => {
     .status(StatusCodes.OK)
     .json(rest);
 };
+
+export const google = async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  const expiryDate = new Date(Date.now() + 100 * 60 * 60);
+
+  if (user) {
+    const token = createToken({ id: user._id });
+    const { password: hashedPassword, ...rest } = user._doc;
+    res
+      .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
+      .status(StatusCodes.OK)
+      .json(rest);
+  } else {
+    const generatedPassword = Math.random().toString(36).slice(-8);
+    const hashedPassword = await hashPassword(generatedPassword);
+
+    const newUser = new User({
+      username:
+        req.body.name.split(" ").join("").toLowerCase() +
+        Math.floor(Math.random() * 10000).toString(),
+      email: req.body.email,
+      password: hashedPassword,
+      profilePicture: req.body.photo,
+    });
+
+    await newUser.save();
+    const token = await createToken({ id: newUser._id });
+    const { password: hashedPassword2, ...rest } = newUser._doc;
+    res
+      .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
+      .status(StatusCodes.OK)
+      .json(rest);
+  }
+};
