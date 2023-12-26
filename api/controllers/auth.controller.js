@@ -20,13 +20,15 @@ export const signIn = async (req, res) => {
 
   const validUser = await User.findOne({ email });
   if (!validUser) throw new NotFoundError("Invalid credentials");
-  const validPassword = comparePassword(password, validUser.password);
+
+  const validPassword = await comparePassword(password, validUser.password);
   if (!validPassword) throw new NotFoundError("Invalid credentials");
+
   const token = createToken({ id: validUser._id });
+
   const { password: hashedPassword, ...rest } = validUser._doc;
 
   const expiríDate = new Date(Date.now() + 100 * 60 * 60);
-
   res
     .cookie("access_token", token, { httpOnly: true, expires: expiríDate })
     .status(StatusCodes.OK)
