@@ -16,18 +16,18 @@ export class BadRequestError extends Error {
   }
 }
 
-export class UnauthenticatedError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "UnauthenticatedError";
-    this.statusCode = StatusCodes.UNAUTHORIZED;
-  }
-}
-
 export class UnauthorizedError extends Error {
   constructor(message) {
     super(message);
     this.name = "UnauthorizedError";
+    this.statusCode = StatusCodes.UNAUTHORIZED;
+  }
+}
+
+export class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ForbiddenError";
     this.statusCode = StatusCodes.FORBIDDEN;
   }
 }
