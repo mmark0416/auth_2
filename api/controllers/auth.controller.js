@@ -25,12 +25,13 @@ export const signIn = async (req, res) => {
   if (!validPassword) throw new NotFoundError("Invalid credentials");
 
   const token = await createJwtToken({ id: validUser._id });
+  console.log(token);
 
   const { password: hashedPassword, ...rest } = validUser._doc;
 
-  const expiríDate = new Date(Date.now() + 100 * 60 * 60);
+  const expiryDate = new Date(Date.now() + 100 * 60 * 60);
   res
-    .cookie("access_token", token, { httpOnly: true, expires: expiríDate })
+    .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
     .status(StatusCodes.OK)
     .json(rest);
 };
@@ -41,7 +42,7 @@ export const google = async (req, res) => {
   const expiryDate = new Date(Date.now() + 100 * 60 * 60);
 
   if (user) {
-    const token = createJwtToken({ id: user._id });
+    const token = await createJwtToken({ id: user._id });
     const { password: hashedPassword, ...rest } = user._doc;
     res
       .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
