@@ -29,7 +29,7 @@ export const signIn = async (req, res) => {
 
   const { password: hashedPassword, ...rest } = validUser._doc;
 
-  const expiryDate = new Date(Date.now() + 100 * 60 * 60);
+  const expiryDate = new Date(Date.now() + 1000 * 60 * 60);
   res
     .cookie("access_token", token, { httpOnly: true, expires: expiryDate })
     .status(StatusCodes.OK)
@@ -39,7 +39,7 @@ export const signIn = async (req, res) => {
 export const google = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
 
-  const expiryDate = new Date(Date.now() + 100 * 60 * 60);
+  const expiryDate = new Date(Date.now() + 1000 * 60 * 60);
 
   if (user) {
     const token = await createJwtToken({ id: user._id });

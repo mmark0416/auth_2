@@ -3,10 +3,6 @@ import { ForbiddenError } from "../errors/customError.js";
 import User from "../models/user.model.js";
 import { hashPassword } from "../utils/bcryptjs.js";
 
-export const test = (req, res) => {
-  res.send("hello");
-};
-
 export const updateUser = async (req, res) => {
   if (req.user.id !== req.params.id)
     throw new ForbiddenError("You can update only your account!");
@@ -27,5 +23,13 @@ export const updateUser = async (req, res) => {
     },
     { new: true }
   );
-  res.status(StatusCodes.OK).json(updatedUser)
+  res.status(StatusCodes.OK).json(updatedUser);
+};
+
+export const deleteUser = async (req, res) => {
+  if (req.user.id !== req.params.id)
+    throw new ForbiddenError("You can update only your account!");
+
+  await User.findByIdAndDelete(req.params.id)
+  res.status(StatusCodes.OK).json("User has been deleted!")
 };

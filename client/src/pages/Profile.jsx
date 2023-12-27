@@ -12,6 +12,9 @@ import {
   updateUserStart,
   updateFailure,
   updateSuccess,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice.js";
 
 const Profile = () => {
@@ -22,7 +25,6 @@ const Profile = () => {
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSucces, setUpdateSucces] = useState(false);
-  
 
   const { currentUser, loading, error } = useSelector((state) => state.user);
 
@@ -78,9 +80,26 @@ const Profile = () => {
         return;
       }
       dispatch(updateSuccess(data));
-      setUpdateSucces(true)
+      setUpdateSucces(true);
     } catch (error) {
       dispatch(updateFailure(error));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.err) {
+        return;
+      }
+      dispatch(deleteUserSuccess());
+    } catch (error) {
+      dispatch(deleteUserFailure(error))
     }
   };
 
@@ -138,11 +157,15 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <p className="text-red-700 mt-5">{error && "Something went wrong!"}</p>
-      <p className="text-green-700 mt-5">{updateSucces && "User is updated successfully!"}</p>
+      <p className="text-green-700 mt-5">
+        {updateSucces && "User is updated successfully!"}
+      </p>
     </div>
   );
 };
